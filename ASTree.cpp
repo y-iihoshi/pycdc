@@ -1143,10 +1143,8 @@ PycRef<ASTNode> BuildFromCode(PycRef<PycCode> code, PycModule* mod)
                     break;
                 }
 
-                if ((curblock->blktype() == ASTBlock::BLK_WHILE
-                            && !curblock->inited())
-                        || (curblock->blktype() == ASTBlock::BLK_IF
-                            && curblock->size() == 0)) {
+                if (curblock->blktype() == ASTBlock::BLK_WHILE
+                        && !curblock->inited()) {
                     PycRef<PycObject> fakeint = new PycInt(1);
                     PycRef<ASTNode> truthy = new ASTObject(fakeint);
 
@@ -1208,11 +1206,6 @@ PycRef<ASTNode> BuildFromCode(PycRef<PycCode> code, PycModule* mod)
                             stack_hist.pop();
                         }
                         push = false;
-
-                        if (prev->blktype() == ASTBlock::BLK_MAIN) {
-                            /* Something went out of control! */
-                            prev = nil;
-                        }
                     } else if (prev->blktype() == ASTBlock::BLK_TRY
                             && prev->end() < pos+operand) {
                         /* Need to add an except/finally block */
